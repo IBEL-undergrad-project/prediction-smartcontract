@@ -2,15 +2,15 @@ pragma solidity ^0.7.3;
 
 contract Prediction {
     enum Side {
+        Lee,
         Yoon,
-        Lee
+        Ahn,
+        Shim,
+        Heo
     }
-    struct Result {
-        Side winner;
-        Side loser;
-    }
-    Result public result;
+    Side public result;
     bool public electionFinished;
+    bool public oracleTookGain;
 
     mapping(Side => uint256) public bets;
     mapping(address => mapping(Side => uint256)) public betsPerGambler;
@@ -27,22 +27,43 @@ contract Prediction {
     }
 
     function withdrawGain() external {
-        uint256 gamblerBet = betsPerGambler[msg.sender][result.winner];
-        require(gamblerBet > 0, "you do not have any winning bet");
         require(electionFinished == true, "election not finished");
-        uint256 gain = gamblerBet +
-            (bets[result.loser] * gamblerBet) /
-            bets[result.winner];
+
+        uint256 gamblerBet = betsPerGambler[msg.sender][result];
+        require(
+            gamblerBet > 0,
+            "you do not have any winning bet, or you already have received the gain"
+        );
+
+        // gain calculation algorithm
+        uint256 totalPrize = bets[Lee] +
+            bets[Yoon] +
+            bets[Ahn] +
+            bets[Shim] +
+            bets[Heo];
+        uint256 totalWinnerPrize = bets[result];
+        uint256 gain = (totalPrize / totalWinnerPrize) * gamblerBet * 0.99;
+
+        // prevent getting gain twice
         betsPerGambler[msg.sender][Side.Lee] = 0;
         betsPerGambler[msg.sender][Side.Yoon] = 0;
+        betsPerGambler[msg.sender][Side.Ahn] = 0;
+        betsPerGambler[msg.sender][Side.Shim] = 0;
+        betsPerGambler[msg.sender][Side.Heo] = 0;
+
         msg.sender.transfer(gain);
     }
 
-    function reportResult(Side _winner, Side _loser) external {
+    function reportResult(Side _winner) external {
         require(oracle == msg.sender, "only oracle");
         require(electionFinished == false, "election is finished");
-        result.winner = _winner;
-        result.loser = _loser;
+        result = _winner;
         electionFinished = true;
+
+        // send oracle for profit
+        require(oracleTookGain == false, "oracle has already taken the gain");
+        msg.sender.transfer(
+            (bets[Lee] + bets[Yoon] + bets[Ahn] + bets[Shim] + bets[Heo]) * 0.01
+        );
     }
 }
