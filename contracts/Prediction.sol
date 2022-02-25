@@ -10,14 +10,16 @@ contract Prediction {
     }
     Side public result;
     bool public electionFinished;
-    bool public oracleTookGain;
 
     mapping(Side => uint256) public bets;
     mapping(address => mapping(Side => uint256)) public betsPerGambler;
-    address public oracle;
 
-    constructor(address _oracle) {
+    address public oracle;
+    uint256 public commission; // in percentages
+
+    constructor(address _oracle, uint256 _commission) {
         oracle = _oracle;
+        commission = _commission;
     }
 
     function placeBet(Side _side) external payable {
@@ -42,7 +44,9 @@ contract Prediction {
             bets[Shim] +
             bets[Heo];
         uint256 totalWinnerPrize = bets[result];
-        uint256 gain = (totalPrize / totalWinnerPrize) * gamblerBet * 0.99;
+        uint256 gain = (totalPrize / totalWinnerPrize) *
+            gamblerBet *
+            (1 - commission);
 
         // prevent getting gain twice
         betsPerGambler[msg.sender][Side.Lee] = 0;
@@ -61,9 +65,9 @@ contract Prediction {
         electionFinished = true;
 
         // send oracle for profit
-        require(oracleTookGain == false, "oracle has already taken the gain");
         msg.sender.transfer(
-            (bets[Lee] + bets[Yoon] + bets[Ahn] + bets[Shim] + bets[Heo]) * 0.01
+            (bets[Lee] + bets[Yoon] + bets[Ahn] + bets[Shim] + bets[Heo]) *
+                commission
         );
     }
 }
