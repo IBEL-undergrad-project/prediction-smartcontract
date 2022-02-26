@@ -15,11 +15,12 @@ contract Prediction {
     mapping(address => mapping(Side => uint256)) public betsPerGambler;
 
     address public oracle;
-    uint256 public commission; // in percentages
+    uint256 public commissionPercentage;
+    
 
-    constructor(address _oracle, uint256 _commission) {
+    constructor(address _oracle,uint256 _commissionPercentage) {
         oracle = _oracle;
-        commission = _commission;
+        commissionPercentage = _commissionPercentage;
     }
 
     function placeBet(Side _side) external payable {
@@ -38,15 +39,16 @@ contract Prediction {
         );
 
         // gain calculation algorithm
-        uint256 totalPrize = bets[Lee] +
-            bets[Yoon] +
-            bets[Ahn] +
-            bets[Shim] +
-            bets[Heo];
+        uint256 totalPrize = bets[Side.Lee] +
+            bets[Side.Yoon] +
+            bets[Side.Ahn] +
+            bets[Side.Shim] +
+            bets[Side.Heo];
         uint256 totalWinnerPrize = bets[result];
         uint256 gain = (totalPrize / totalWinnerPrize) *
             gamblerBet *
-            (1 - commission);
+            (100 - commissionPercentage) /
+            100;
 
         // prevent getting gain twice
         betsPerGambler[msg.sender][Side.Lee] = 0;
@@ -64,10 +66,13 @@ contract Prediction {
         result = _winner;
         electionFinished = true;
 
+        uint256 oracle_gain = (bets[Side.Lee] + bets[Side.Yoon] + bets[Side.Ahn] + bets[Side.Shim] + bets[Side.Heo]) *
+                commissionPercentage/ 
+                100;
+
         // send oracle for profit
         msg.sender.transfer(
-            (bets[Lee] + bets[Yoon] + bets[Ahn] + bets[Shim] + bets[Heo]) *
-                commission
+            oracle_gain
         );
     }
 }
