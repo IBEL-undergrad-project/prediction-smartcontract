@@ -1,11 +1,31 @@
-> transaction hash:    0x4f528fc3dc43b64ea91ad741fff041c49592d6f5e5cfa8730eb2583e7e637b59
-   > Blocks: 1            Seconds: 41
-   > contract address:    0xFF730cF53b2F8Aa1E73425fE988EBfbB77A275bf
-   > block number:        12017925
-   > block timestamp:     1645853462
+2_Prediction_migration.js
+=========================
+
+   Deploying 'Prediction'
+   ----------------------
+   > transaction hash:    0xa3a43dd387b206b1eb9310871e5e887d1b7cdac84840556c5a7c461dd83cf0ea
+   > Blocks: 0            Seconds: 25
+   > contract address:    0x11734780505Ef9FadF27fF2119d16178C8433A7f
+   > block number:        12018011
+   > block timestamp:     1645855286
    > account:             0xEb37731548082a75DD7182bF5D45AecDA952117a
-   > balance:             1.598944347494653135
-   > gas used:            188263 (0x2df67)
-   > gas price:           2.500000012 gwei
+   > balance:             2.595783884978221328
+   > gas used:            796189 (0xc261d)
+   > gas price:           2.500000014 gwei
    > value sent:          0 ETH
-   > total cost:          0.000470657502259156 ETH
+   > total cost:          0.001990472511146646 ETH
+
+   Pausing for 2 confirmations...
+
+   -------------------------------
+   > confirmation number: 1 (block: 12018012)
+   > confirmation number: 2 (block: 12018013)
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:     0.001990472511146646 ETH
+
+Summary
+=======
+> Total deployments:   2
+> Final cost:          0.002461130013217539 ETH

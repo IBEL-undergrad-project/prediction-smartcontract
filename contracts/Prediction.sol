@@ -8,6 +8,7 @@ contract Prediction {
         Shim,
         Heo
     }
+    
     Side public result;
     bool public electionFinished;
 
