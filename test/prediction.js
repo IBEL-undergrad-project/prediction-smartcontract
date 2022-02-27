@@ -3,7 +3,7 @@ const Prediction = artifacts.require("Prediction.sol");
 const SIDE = {
   
   LEE: 0,
-  YOON: 1,
+  YOON:1,
   AHN :2,
   SIM:3,
   HEO:4,
@@ -12,12 +12,15 @@ const SIDE = {
 
 const commission = 10;
 
+const placeBetEndDate=1645962300;
+//const placeBetEndDate=1645962060;
+
 
 contract("Prediction", (addresses) => {
   const [admin, oracle, gambler1, gambler2, gambler3, gambler4,gambler5,gambler6,_] = addresses;
 
   it("should work", async () => {
-    const prediction = await Prediction.new(oracle,commission);
+    const prediction = await Prediction.new(oracle,commission,placeBetEndDate);
 
     await prediction.placeBet(SIDE.LEE, {
       from: gambler1,
@@ -71,7 +74,8 @@ contract("Prediction", (addresses) => {
       ); */
 
 
-      console.log(oracle);
+      
+      
 
       
   

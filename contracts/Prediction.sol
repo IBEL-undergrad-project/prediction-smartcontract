@@ -8,27 +8,31 @@ contract Prediction {
         Shim,
         Heo
     }
-    
-    Side public result;
-    bool public electionFinished;
 
+    Side public result;
+    
     mapping(Side => uint256) public bets;
     mapping(address => mapping(Side => uint256)) public betsPerGambler;
 
     address public oracle;
     uint256 public commissionPercentage;
-    
+    uint256 public placeBetEndDate;
+    bool public electionFinished;
 
-    constructor(address _oracle,uint256 _commissionPercentage) {
+    constructor(address _oracle, uint256 _commissionPercentage, uint256 _placeBetEndDate) {
         oracle = _oracle;
         commissionPercentage = _commissionPercentage;
+        placeBetEndDate = _placeBetEndDate;
     }
 
     function placeBet(Side _side) external payable {
         require(electionFinished == false, "election is finished");
+        require(placeBetEndDate>block.timestamp, "placebet is finished");
         bets[_side] += msg.value;
         betsPerGambler[msg.sender][_side] += msg.value;
     }
+
+    
 
     function withdrawGain() external {
         require(electionFinished == true, "election not finished");
@@ -64,6 +68,7 @@ contract Prediction {
     function reportResult(Side _winner) external {
         require(oracle == msg.sender, "only oracle");
         require(electionFinished == false, "election is finished");
+        require(placeBetEndDate < block.timestamp, "placebet is not finished yet");
         result = _winner;
         electionFinished = true;
 
