@@ -1,26 +1,36 @@
 const Prediction = artifacts.require("Prediction.sol");
 
 const SIDE = {
-  
   LEE: 0,
-  YOON:1,
-  AHN :2,
-  SIM:3,
-  HEO:4,
-  
+  YOON: 1,
+  AHN: 2,
+  SIM: 3,
+  HEO: 4,
 };
 
 const commission = 10;
 
-const placeBetEndDate=1645962300;
-//const placeBetEndDate=1645962060;
-
+const placeBetEndDate = 1645962300;
 
 contract("Prediction", (addresses) => {
-  const [admin, oracle, gambler1, gambler2, gambler3, gambler4,gambler5,gambler6,_] = addresses;
+  const [
+    _,
+    oracle,
+    gambler1,
+    gambler2,
+    gambler3,
+    gambler4,
+    gambler5,
+    gambler6,
+    _,
+  ] = addresses;
 
   it("should work", async () => {
-    const prediction = await Prediction.new(oracle,commission,placeBetEndDate);
+    const prediction = await Prediction.new(
+      oracle,
+      commission,
+      placeBetEndDate
+    );
 
     await prediction.placeBet(SIDE.LEE, {
       from: gambler1,
@@ -46,41 +56,13 @@ contract("Prediction", (addresses) => {
       from: gambler6,
       value: web3.utils.toWei("4"),
     });
-    
 
-    await prediction.reportResult(
-      SIDE.LEE,
-      { from: oracle }
-      );
+    await prediction.reportResult(SIDE.LEE, { from: oracle });
 
-      
-      await Promise.all(
-        [gambler1,gambler2].map((gambler) =>
-          prediction.withdrawGain({ from: gambler })
-        )
-      );
-  
-    
-      /* await Promise.all(
-        [gambler1,gambler2].map((gambler) =>
-          prediction.withdrawGain({ from: gambler })
-        )
-      ); */
-
-     /*  await Promise.all(
-        [gambler3,gambler4].map((gambler) =>
-          prediction.withdrawGain({ from: gambler })
-        )
-      ); */
-
-
-      
-      
-
-      
-  
-     
-    
-
+    await Promise.all(
+      [gambler1, gambler2].map((gambler) =>
+        prediction.withdrawGain({ from: gambler })
+      )
+    );
   });
 });
