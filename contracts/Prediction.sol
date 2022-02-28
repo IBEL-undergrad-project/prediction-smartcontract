@@ -77,8 +77,8 @@ contract Prediction {
         );
         require(resultReported == false, "election result is already reported");
         require(
-            electionStartDate < block.timestamp,
-            "placebet is not finished yet"
+            electionStartDate <= block.timestamp,
+            "election has not started yet"
         );
 
         result = _winner;
